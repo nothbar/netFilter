@@ -1,0 +1,86 @@
+;
+; MyDriver1.inf
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = WFPCALLOUTS
+ClassGuid   = {57465043-616C-6C6F-7574-5F636C617373}
+Provider    = %ManufacturerName%
+DriverVer   = 03/05/2018,10.13.55.979
+
+[DestinationDirs]
+DefaultDestDir          = 12
+MyDriver1.DriverFiles   = 12
+
+;;
+;; Default install sections
+;;
+
+[DefaultInstall]
+OptionDesc = %Description%
+CopyFiles  = MyDriver1.DriverFiles
+
+[DefaultInstall.Services]
+AddService = %ServiceName%,,MyDriver1.Service
+
+;;
+;; Default uninstall sections
+;;
+
+[DefaultUninstall]
+DelFiles = MyDriver1.DriverFiles
+
+[DefaultUninstall.Services]
+DelService = %ServiceName%,0x200             ; SPSVCINST_STOPSERVICE
+
+;;
+;; Services Section
+;;
+
+[MyDriver1.Service]
+DisplayName     = %ServiceName%
+Description     = %ServiceDesc%
+ServiceBinary   = %12%\%DriverName%.sys    ;%windir%\system32\drivers\
+Dependencies    = "FltMgr"
+ServiceType     = 1                         ; SERVICE_KERNEL_DRIVER
+StartType       = 3                         ; SERVICE_BOOT_START
+ErrorControl    = 1                         ; SERVICE_ERROR_NORMAL
+AddReg          = MyDriver1.AddRegistry
+
+[MyDriver1.AddRegistry]
+HKR,,"DebugFlags",0x00010001 ,0x0
+HKR,,"SupportedFeatures",0x00010001,0x3
+HKR,"Instances","DefaultInstance",0x00000000,%DefaultInstance%
+HKR,"Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
+HKR,"Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
+
+
+[MyDriver1.DriverFiles]
+%DriverName%.sys
+
+[SourceDisksFiles]
+%DriverName%.sys = 1,,
+
+[SourceDisksNames]
+1 = %DiskId1%,,,
+
+[Strings]
+ManufacturerName = ""
+ClassName   = ""
+DiskName    = "MyDriver1 Source Disk"
+DriverName  = "MyDriver1"
+Description = "My Driver 1"
+ServiceName = "MyDriver1"
+ServiceDesc = "my Driver 1"
+DiskId1     = "MyDriver1 Device Installation Disk"
+
+;Instances specific information.
+DefaultInstance         = "MyDriver1 Instance"
+Instance1.Name          = "MyDriver1 Instance"
+; TODO - Change the altitude value, see http://connect.microsoft.com/site221/content/content.aspx?ContentID=2512
+Instance1.Altitude      = "370030"
+; Instance.Altitude     = "_TODO_Change_Altitude_appropriately_"
+Instance1.Flags         = 0x0              ; Allow all attachments
+
+
